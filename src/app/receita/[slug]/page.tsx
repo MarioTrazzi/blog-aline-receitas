@@ -5,6 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { BuyButton } from "./buy-button";
 
+function isDirectVideoFile(url: string) {
+  return /(\.mp4|\.webm|\.ogg)(\?|$)/i.test(url) ||
+    url.includes("blob.vercel-storage.com");
+}
+
 interface Props {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ token?: string; checkout?: string }>;
@@ -108,15 +113,24 @@ export default async function RecipePage({ params, searchParams }: Props) {
                   📹 Vídeo Completo
                 </h2>
                 {recipe.videoUrl ? (
-                  <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black">
-                    <iframe
+                  isDirectVideoFile(recipe.videoUrl) ? (
+                    <video
                       src={recipe.videoUrl}
-                      className="absolute inset-0 w-full h-full"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      title={`Vídeo: ${recipe.title}`}
+                      controls
+                      playsInline
+                      className="w-full rounded-xl bg-black"
                     />
-                  </div>
+                  ) : (
+                    <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black">
+                      <iframe
+                        src={recipe.videoUrl}
+                        className="absolute inset-0 w-full h-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        title={`Vídeo: ${recipe.title}`}
+                      />
+                    </div>
+                  )
                 ) : (
                   <div className="rounded-xl border border-dashed border-rose-200 bg-rose-50 p-6 text-sm text-gray-600">
                     Video completo ainda nao foi cadastrado para esta receita.

@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-
-function isAuthorized(request: NextRequest): boolean {
-  const password = request.headers.get("authorization");
-  return password === process.env.ADMIN_PASSWORD;
-}
+import { isAdminAuthorized } from "@/lib/admin-auth";
 
 // GET - List all recipes
 export async function GET(request: NextRequest) {
-  if (!isAuthorized(request)) {
+  if (!isAdminAuthorized(request)) {
     return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
   }
 
@@ -21,7 +17,7 @@ export async function GET(request: NextRequest) {
 
 // POST - Create a recipe
 export async function POST(request: NextRequest) {
-  if (!isAuthorized(request)) {
+  if (!isAdminAuthorized(request)) {
     return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
   }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 
 interface Recipe {
@@ -23,6 +24,7 @@ export default function AdminPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [uploadingVideo, setUploadingVideo] = useState(false);
 
   // Form state
   const [form, setForm] = useState({
@@ -161,6 +163,51 @@ export default function AdminPage() {
     loadRecipes();
   };
 
+  const isDirectVideoFile = (url: string) => {
+    return /(\.mp4|\.webm|\.ogg)(\?|$)/i.test(url) ||
+      url.includes("blob.vercel-storage.com");
+  };
+
+  const handleVideoUpload = async (file: File) => {
+    if (!form.slug) {
+      setError("Defina o título ou slug antes de enviar o vídeo.");
+      return;
+    }
+
+    setError("");
+    setUploadingVideo(true);
+
+    try {
+      const uploadFormData = new FormData();
+      uploadFormData.append("file", file);
+      uploadFormData.append("slug", form.slug);
+
+      const response = await fetch("/api/admin/upload-video", {
+        method: "POST",
+        headers: {
+          Authorization: password,
+        },
+        body: uploadFormData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Erro ao enviar vídeo.");
+        return;
+      }
+
+      setForm((current) => ({
+        ...current,
+        videoUrl: data.url,
+      }));
+    } catch {
+      setError("Erro ao enviar vídeo.");
+    } finally {
+      setUploadingVideo(false);
+    }
+  };
+
   if (!authenticated) {
     return (
       <div className="max-w-sm mx-auto px-4 py-20">
@@ -274,7 +321,7 @@ export default function AdminPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">
-                  URL do Vídeo (embed)
+                  URL do Vídeo
                 </label>
                 <input
                   type="url"
@@ -282,9 +329,12 @@ export default function AdminPage() {
                   onChange={(e) =>
                     setForm({ ...form, videoUrl: e.target.value })
                   }
-                  placeholder="https://youtube.com/embed/..."
+                  placeholder="https://youtube.com/embed/... ou URL do MP4"
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400"
                 />
+                <p className="mt-1 text-xs text-gray-400">
+                  Pode ser link embed do YouTube/Vimeo ou um MP4 enviado abaixo.
+                </p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">
@@ -300,6 +350,56 @@ export default function AdminPage() {
                 />
               </div>
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">
+                Enviar Vídeo MP4
+              </label>
+              <div className="rounded-xl border border-dashed border-rose-200 bg-rose-50 p-4">
+                <input
+                  type="file"
+                  accept="video/mp4,video/webm,video/ogg,video/*"
+                  disabled={uploadingVideo}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      void handleVideoUpload(file);
+                    }
+                    e.currentTarget.value = "";
+                  }}
+                  className="block w-full text-sm text-gray-600 file:mr-4 file:rounded-full file:border-0 file:bg-rose-600 file:px-4 file:py-2 file:font-semibold file:text-white hover:file:bg-rose-700"
+                />
+                <p className="mt-2 text-xs text-gray-500">
+                  O vídeo será enviado para armazenamento persistente. Suba primeiro o título ou slug da receita.
+                </p>
+                {uploadingVideo ? (
+                  <p className="mt-2 text-sm text-rose-600">Enviando vídeo...</p>
+                ) : null}
+              </div>
+            </div>
+
+            {form.videoUrl ? (
+              <div className="space-y-3 rounded-2xl border border-rose-100 bg-white p-4">
+                <p className="text-sm font-medium text-gray-700">Prévia do vídeo</p>
+                {isDirectVideoFile(form.videoUrl) ? (
+                  <video
+                    src={form.videoUrl}
+                    controls
+                    className="w-full rounded-xl bg-black"
+                  />
+                ) : (
+                  <div className="relative aspect-video overflow-hidden rounded-xl bg-black">
+                    <iframe
+                      src={form.videoUrl}
+                      className="absolute inset-0 h-full w-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      title="Prévia do vídeo"
+                    />
+                  </div>
+                )}
+              </div>
+            ) : null}
 
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">
@@ -382,6 +482,9 @@ export default function AdminPage() {
                 <p className="text-sm text-gray-500">
                   /{recipe.slug} • R${" "}
                   {recipe.price.toFixed(2).replace(".", ",")}
+                </p>
+                <p className="text-xs text-gray-400 mt-1">
+                  {recipe.videoUrl ? "Vídeo cadastrado" : "Sem vídeo cadastrado"}
                 </p>
               </div>
               <div className="flex gap-2">

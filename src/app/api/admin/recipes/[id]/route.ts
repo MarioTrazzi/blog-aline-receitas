@@ -1,17 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-
-function isAuthorized(request: NextRequest): boolean {
-  const password = request.headers.get("authorization");
-  return password === process.env.ADMIN_PASSWORD;
-}
+import { isAdminAuthorized } from "@/lib/admin-auth";
 
 // PUT - Update a recipe
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!isAuthorized(request)) {
+  if (!isAdminAuthorized(request)) {
     return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
   }
 
