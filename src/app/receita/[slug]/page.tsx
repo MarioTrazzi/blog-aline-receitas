@@ -23,8 +23,10 @@ export default async function RecipePage({ params, searchParams }: Props) {
     notFound();
   }
 
+  const isFreeRecipe = recipe.price === 0;
+
   // Check if user has access via token
-  let hasAccess = false;
+  let hasAccess = isFreeRecipe;
   if (token) {
     const purchase = await prisma.purchase.findFirst({
       where: {
@@ -53,7 +55,8 @@ export default async function RecipePage({ params, searchParams }: Props) {
 
   const ingredients: string[] = JSON.parse(recipe.ingredients);
   const preparation: string[] = JSON.parse(recipe.preparation);
-  const autoStartCheckout = checkout === "1" && Boolean(session?.user) && !hasAccess;
+  const autoStartCheckout =
+    checkout === "1" && Boolean(session?.user) && !hasAccess && !isFreeRecipe;
   const loginUrl = `/entrar?callbackUrl=${encodeURIComponent(`/receita/${recipe.slug}?checkout=1`)}`;
 
   return (
@@ -90,6 +93,11 @@ export default async function RecipePage({ params, searchParams }: Props) {
             {recipe.title}
           </h1>
           <p className="text-gray-500 text-lg mb-6">{recipe.description}</p>
+          {isFreeRecipe ? (
+            <div className="mb-6 inline-flex rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">
+              Receita gratuita liberada para degustacao
+            </div>
+          ) : null}
 
           {hasAccess ? (
             /* Conteúdo Desbloqueado */

@@ -4,12 +4,13 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
 interface Props {
-  searchParams: Promise<{ purchase?: string }>;
+  searchParams: Promise<{ purchase?: string; external_reference?: string }>;
 }
 
 export default async function PaymentSuccess({ searchParams }: Props) {
-  const { purchase: purchaseId } = await searchParams;
+  const { purchase: purchaseIdFromQuery, external_reference: externalReference } = await searchParams;
   const session = await auth();
+  const purchaseId = purchaseIdFromQuery || externalReference;
 
   let accessUrl: string | null = null;
 

@@ -45,8 +45,14 @@ export default async function Home() {
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
-                <div className="absolute top-3 right-3 bg-rose-600 text-white text-sm font-semibold px-3 py-1 rounded-full shadow">
-                  R$ {recipe.price.toFixed(2).replace(".", ",")}
+                <div
+                  className={`absolute top-3 right-3 text-white text-sm font-semibold px-3 py-1 rounded-full shadow ${
+                    recipe.price === 0 ? "bg-emerald-600" : "bg-rose-600"
+                  }`}
+                >
+                  {recipe.price === 0
+                    ? "Gratis"
+                    : `R$ ${recipe.price.toFixed(2).replace(".", ",")}`}
                 </div>
               </div>
               <div className="p-5">
@@ -58,10 +64,10 @@ export default async function Home() {
                 </p>
                 <div className="mt-4 flex items-center justify-between">
                   <span className="text-xs text-gray-400">
-                    🔒 Receita bloqueada
+                    {recipe.price === 0 ? "🔓 Receita liberada" : "🔒 Receita bloqueada"}
                   </span>
                   <span className="text-rose-600 text-sm font-semibold group-hover:underline">
-                    Ver receita →
+                    {recipe.price === 0 ? "Acessar agora →" : "Ver receita →"}
                   </span>
                 </div>
               </div>

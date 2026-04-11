@@ -10,6 +10,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { recipeId, email: rawEmail } = body;
     const email = rawEmail ?? session?.user?.email;
+    const baseUrl = request.nextUrl.origin;
 
     if (!recipeId || !email || !email.includes("@")) {
       return NextResponse.json(
@@ -44,7 +45,7 @@ export async function POST(request: NextRequest) {
       });
       return NextResponse.json({
         alreadyPurchased: true,
-        accessUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/receita/${recipe?.slug}?token=${existingPurchase.accessToken}`,
+        accessUrl: `/receita/${recipe?.slug}?token=${existingPurchase.accessToken}`,
       });
     }
 
@@ -56,6 +57,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Receita não encontrada" },
         { status: 404 }
+      );
+    }
+
+    if (recipe.price === 0) {
+      return NextResponse.json(
+        { error: "Esta receita ja esta liberada gratuitamente." },
+        { status: 400 }
       );
     }
 
@@ -90,13 +98,13 @@ export async function POST(request: NextRequest) {
           email,
         },
         back_urls: {
-          success: `${process.env.NEXT_PUBLIC_BASE_URL}/pagamento/sucesso?purchase=${purchase.id}`,
-          failure: `${process.env.NEXT_PUBLIC_BASE_URL}/pagamento/falha`,
-          pending: `${process.env.NEXT_PUBLIC_BASE_URL}/pagamento/pendente`,
+          success: `${baseUrl}/pagamento/sucesso`,
+          failure: `${baseUrl}/pagamento/falha`,
+          pending: `${baseUrl}/pagamento/pendente`,
         },
         auto_return: "approved",
         external_reference: purchase.id,
-        notification_url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/webhook`,
+        notification_url: `${baseUrl}/api/webhook`,
         payment_methods: {
           excluded_payment_types: [],
           installments: 1,
