@@ -32,6 +32,12 @@ html, body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* garante que o sticky do header funcione */
+body {
+  overflow-x: hidden;
 }
 
 /* ============ TEXTURAS ============ */

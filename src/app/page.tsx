@@ -1,6 +1,3 @@
-// src/app/page.tsx
-// Home do Blog da Aline — estrutura editorial gourmet.
-
 import { prisma } from "@/lib/prisma";
 import { Masthead } from "@/components/Masthead";
 import { Hero } from "@/components/Hero";
@@ -23,39 +20,37 @@ export default async function Home() {
   const rest = recipes.slice(4);
 
   return (
-    <main>
+    <main className="mx-auto max-w-[1200px]">
       <Masthead />
 
-      <div style={{ borderBottom: "1px solid rgba(31,26,20,0.12)" }} />
-
       {featured ? (
-        <Hero recipe={featured} />
+        <div className="px-0 md:px-6 md:pt-6 lg:px-10">
+          <Hero recipe={featured} />
+        </div>
       ) : (
         <section className="px-6 py-24 text-center md:px-14">
           <p className="kicker mb-4">Em breve</p>
-          <h2 className="display text-[36px] md:text-[48px]">
+          <h2 className="display text-[32px] md:text-[44px]">
             Nenhuma receita publicada <span className="italic-accent">ainda</span>.
           </h2>
-          <p className="mt-4" style={{ color: "var(--ink-3)" }}>
+          <p className="mt-4 text-[15px]" style={{ color: "var(--ink-3)" }}>
             Volte em breve — estamos testando a próxima receita na cozinha.
           </p>
         </section>
       )}
 
       {popular.length > 0 && (
-        <section className="px-6 py-20 md:px-14">
+        <section className="px-6 py-14 md:px-10 md:py-16">
           <div
-            className="mb-12 flex items-baseline justify-between border-b pb-4"
-            style={{ borderColor: "rgba(31,26,20,0.15)" }}
+            className="mb-8 border-b pb-4"
+            style={{ borderColor: "rgba(31,26,20,0.12)" }}
           >
-            <div>
-              <div className="kicker-accent mb-2">Mais cozinhadas da semana</div>
-              <h2 className="display text-[32px] md:text-[44px]">
-                As favoritas <span className="italic-accent text-[1.1em]">da casa</span>
-              </h2>
-            </div>
+            <div className="kicker-accent mb-1">Mais cozinhadas</div>
+            <h2 className="display text-[26px] md:text-[36px]">
+              As favoritas <span className="italic-accent">da casa</span>
+            </h2>
           </div>
-          <div className="grid gap-10 md:grid-cols-3">
+          <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3">
             {popular.map((r, i) => (
               <RecipeCard key={r.id} recipe={r} index={i + 1} />
             ))}
@@ -68,19 +63,17 @@ export default async function Home() {
       <Testimonials />
 
       {rest.length > 0 && (
-        <section className="px-6 py-20 md:px-14">
+        <section className="px-6 py-14 md:px-10 md:py-16">
           <div
-            className="mb-12 flex items-baseline justify-between border-b pb-4"
-            style={{ borderColor: "rgba(31,26,20,0.15)" }}
+            className="mb-8 border-b pb-4"
+            style={{ borderColor: "rgba(31,26,20,0.12)" }}
           >
-            <div>
-              <div className="kicker-accent mb-2">Catálogo completo</div>
-              <h2 className="display text-[32px] md:text-[44px]">
-                Todas as <span className="italic-accent text-[1.1em]">receitas</span>
-              </h2>
-            </div>
+            <div className="kicker-accent mb-1">Catálogo completo</div>
+            <h2 className="display text-[26px] md:text-[36px]">
+              Todas as <span className="italic-accent">receitas</span>
+            </h2>
           </div>
-          <div className="grid gap-8 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {rest.map((r, i) => (
               <RecipeCard key={r.id} recipe={r} index={i + 4} />
             ))}
