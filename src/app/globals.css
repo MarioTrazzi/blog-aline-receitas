@@ -1,19 +1,104 @@
-@import "tailwindcss";
+/* globals.css — Blog da Aline
+   Direção V1: Revista gourmet editorial
+   Paleta: papel cru + tinta morna + terracota queimada + mostarda
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #fff1f2;
-  --foreground: #1f2937;
+  --paper: #f5f0e6;
+  --paper-2: #ece5d6;
+  --paper-3: #e4dcc8;
+  --ink: #1f1a14;
+  --ink-2: #3d342a;
+  --ink-3: #6b5f51;
+  --terracota: #b85434;
+  --terracota-deep: #8a3d24;
+  --oliva: #4a5234;
+  --mostarda: #c98a3a;
+  --white: #fdfaf3;
+
+  --serif: 'Fraunces', Georgia, serif;
+  --serif-italic: 'Instrument Serif', Georgia, serif;
+  --sans: 'Inter', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+/* ============ TEXTURAS ============ */
+.paper-bg {
+  background-color: var(--paper);
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+
+/* ============ PLACEHOLDER PARA RECEITAS SEM FOTO ============ */
+.ph-food {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #d9c9a8 0%, #c4a478 50%, #9b7c4f 100%);
+}
+.ph-food::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(ellipse at 30% 30%, rgba(255,240,200,0.25), transparent 50%),
+    radial-gradient(ellipse at 70% 70%, rgba(80,50,20,0.3), transparent 50%);
+}
+.ph-food::after {
+  content: attr(data-label);
+  position: absolute; bottom: 10px; left: 12px;
+  font-family: var(--mono);
+  font-size: 9px; letter-spacing: 0.08em;
+  color: rgba(255,250,240,0.85); text-transform: uppercase;
+  background: rgba(30,20,10,0.35); padding: 3px 7px; border-radius: 2px;
+}
+
+/* ============ TYPOGRAPHY HELPERS ============ */
+.kicker {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.kicker-accent {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--terracota);
+}
+.display {
+  font-family: var(--serif);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  line-height: 0.98;
+}
+.italic-accent {
+  font-family: var(--serif-italic);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.price-pill {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 5px 9px;
+  border-radius: 2px;
+  background: var(--ink);
+  color: var(--paper);
+}
+.price-pill.free { background: var(--oliva); }

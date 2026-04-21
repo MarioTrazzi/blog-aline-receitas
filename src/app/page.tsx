@@ -1,6 +1,14 @@
+// src/app/page.tsx
+// Home do Blog da Aline — estrutura editorial gourmet.
+
 import { prisma } from "@/lib/prisma";
-import Image from "next/image";
-import Link from "next/link";
+import { Masthead } from "@/components/Masthead";
+import { Hero } from "@/components/Hero";
+import { RecipeCard } from "@/components/RecipeCard";
+import { Features } from "@/components/Features";
+import { Testimonials } from "@/components/Testimonials";
+import { Newsletter } from "@/components/Newsletter";
+import { Footer } from "@/components/Footer";
 
 export const revalidate = 60;
 
@@ -10,71 +18,76 @@ export default async function Home() {
     orderBy: { createdAt: "desc" },
   });
 
-  return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      {/* Hero */}
-      <section className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-rose-700 mb-3">
-          Receitas Exclusivas
-        </h1>
-        <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-          Desbloqueie receitas completas com vídeos detalhados, lista de
-          ingredientes e modo de preparo passo a passo. 🍳
-        </p>
-      </section>
+  const featured = recipes[0] ?? null;
+  const popular = recipes.slice(1, 4);
+  const rest = recipes.slice(4);
 
-      {/* Grid de Receitas */}
-      {recipes.length === 0 ? (
-        <div className="text-center py-20 text-gray-500">
-          <p className="text-xl">Nenhuma receita disponível ainda.</p>
-          <p className="mt-2">Volte em breve! 🍰</p>
-        </div>
+  return (
+    <main>
+      <Masthead />
+
+      {featured ? (
+        <Hero recipe={featured} />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {recipes.map((recipe) => (
-            <Link
-              key={recipe.id}
-              href={`/receita/${recipe.slug}`}
-              className="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-rose-100"
-            >
-              <div className="relative w-full h-56">
-                <Image
-                  src={recipe.imageUrl}
-                  alt={recipe.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
-                <div
-                  className={`absolute top-3 right-3 text-white text-sm font-semibold px-3 py-1 rounded-full shadow ${
-                    recipe.price === 0 ? "bg-emerald-600" : "bg-rose-600"
-                  }`}
-                >
-                  {recipe.price === 0
-                    ? "Gratis"
-                    : `R$ ${recipe.price.toFixed(2).replace(".", ",")}`}
-                </div>
-              </div>
-              <div className="p-5">
-                <h2 className="text-lg font-bold text-gray-800 group-hover:text-rose-600 transition">
-                  {recipe.title}
-                </h2>
-                <p className="text-gray-500 text-sm mt-2 line-clamp-2">
-                  {recipe.description}
-                </p>
-                <div className="mt-4 flex items-center justify-between">
-                  <span className="text-xs text-gray-400">
-                    {recipe.price === 0 ? "🔓 Receita liberada" : "🔒 Receita bloqueada"}
-                  </span>
-                  <span className="text-rose-600 text-sm font-semibold group-hover:underline">
-                    {recipe.price === 0 ? "Acessar agora →" : "Ver receita →"}
-                  </span>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+        <section className="px-6 py-24 text-center md:px-14">
+          <p className="kicker mb-4">Em breve</p>
+          <h2 className="display text-[40px] md:text-[56px]">
+            Nenhuma receita publicada <span className="italic-accent">ainda</span>.
+          </h2>
+          <p className="mt-4" style={{ color: "var(--ink-3)" }}>
+            Volte em breve — estamos testando a próxima receita na cozinha.
+          </p>
+        </section>
       )}
-    </div>
+
+      {popular.length > 0 && (
+        <section className="px-6 py-20 md:px-14">
+          <div
+            className="mb-12 flex items-baseline justify-between border-b pb-4"
+            style={{ borderColor: "rgba(31,26,20,0.15)" }}
+          >
+            <div>
+              <div className="kicker-accent mb-2">Mais cozinhadas da semana</div>
+              <h2 className="display text-[32px] md:text-[44px]">
+                As favoritas <span className="italic-accent text-[1.1em]">da casa</span>
+              </h2>
+            </div>
+          </div>
+          <div className="grid gap-10 md:grid-cols-3">
+            {popular.map((r, i) => (
+              <RecipeCard key={r.id} recipe={r} index={i + 1} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <Features />
+
+      <Testimonials />
+
+      {rest.length > 0 && (
+        <section className="px-6 py-20 md:px-14">
+          <div
+            className="mb-12 flex items-baseline justify-between border-b pb-4"
+            style={{ borderColor: "rgba(31,26,20,0.15)" }}
+          >
+            <div>
+              <div className="kicker-accent mb-2">Catálogo completo</div>
+              <h2 className="display text-[32px] md:text-[44px]">
+                Todas as <span className="italic-accent text-[1.1em]">receitas</span>
+              </h2>
+            </div>
+          </div>
+          <div className="grid gap-8 md:grid-cols-3 lg:grid-cols-4">
+            {rest.map((r, i) => (
+              <RecipeCard key={r.id} recipe={r} index={i + 4} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <Newsletter />
+      <Footer />
+    </main>
   );
 }
