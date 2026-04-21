@@ -6,7 +6,7 @@ import path from "node:path";
 import OpenAI from "openai";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../src/generated/prisma/client";
 
 type MockRecipe = {
   title: string;
