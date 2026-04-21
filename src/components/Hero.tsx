@@ -1,6 +1,3 @@
-// src/components/Hero.tsx
-// Receita da semana em destaque. Se não houver receitas, renderiza null.
-
 import Link from "next/link";
 import { RecipeImage } from "./RecipeImage";
 
@@ -17,65 +14,64 @@ export function Hero({ recipe }: { recipe: Recipe | null }) {
   if (!recipe) return null;
   const isFree = recipe.price === 0;
   const priceLabel = isFree
-    ? "GRÁTIS"
+    ? "Grátis"
     : `R$ ${recipe.price.toFixed(2).replace(".", ",")}`;
 
-  const words = recipe.title.trim().split(" ");
-  const head = words.slice(0, -1).join(" ");
-  const tail = words.slice(-1)[0];
-
   return (
-    <section
-      className="border-b px-6 py-14 md:px-14 md:py-20"
-      style={{ borderColor: "rgba(31,26,20,0.15)" }}
-    >
-      <div className="grid items-stretch gap-10 md:grid-cols-2 md:gap-12">
-        <RecipeImage
-          src={recipe.imageUrl}
-          alt={recipe.title}
-          label="hero"
-          aspect="4/5"
-          priority
-        />
-
-        <div className="flex flex-col justify-between pt-3">
-          <div>
-            <div
-              className="mb-6 inline-block pb-1.5 font-mono text-[11px] uppercase tracking-[0.2em]"
-              style={{
-                color: "var(--terracota)",
-                borderBottom: "1px solid var(--terracota)",
-              }}
-            >
-              Receita da semana · Destaque da edição
-            </div>
-
-            <h2
-              className="display mb-6 text-[40px] leading-[0.98] md:text-[68px]"
-              style={{ textWrap: "balance" as never }}
-            >
-              {head}{" "}
-              <span className="italic-accent text-[1.08em]">{tail}</span>
-            </h2>
-
-            <p
-              className="mb-7 max-w-[480px] text-[15px] leading-relaxed md:text-[17px]"
-              style={{ color: "var(--ink-2)" }}
-            >
-              {recipe.description}
-            </p>
+    <section className="px-6 py-12 md:px-14 md:py-16">
+      <div className="grid items-center gap-8 md:grid-cols-[1fr_480px] md:gap-14">
+        <div className="order-2 md:order-1 flex flex-col justify-center">
+          <div
+            className="kicker-accent mb-4 inline-flex items-center gap-2"
+          >
+            <span
+              className="inline-block h-px w-8"
+              style={{ background: "var(--terracota)" }}
+            />
+            Destaque da semana
           </div>
 
-          <div className="flex flex-wrap items-center gap-4">
+          <h2
+            className="display mb-5 text-[36px] leading-[1.02] md:text-[56px]"
+            style={{ textWrap: "balance" as never }}
+          >
+            {recipe.title}
+          </h2>
+
+          <p
+            className="mb-8 max-w-[500px] text-[15px] leading-relaxed md:text-[17px]"
+            style={{ color: "var(--ink-2)" }}
+          >
+            {recipe.description}
+          </p>
+
+          <div className="flex flex-wrap items-center gap-3">
             <Link
               href={`/receita/${recipe.slug}`}
-              className="inline-flex items-center gap-2 rounded-sm px-6 py-3.5 font-mono text-[12px] uppercase tracking-[0.14em]"
+              className="inline-flex items-center gap-2 rounded-sm px-6 py-3.5 font-mono text-[12px] uppercase tracking-[0.12em] transition-opacity hover:opacity-85"
               style={{ background: "var(--ink)", color: "var(--paper)" }}
             >
-              {isFree ? "Acessar receita" : `Desbloquear por ${priceLabel}`}
-              <span>→</span>
+              {isFree ? "Ver receita grátis" : `Desbloquear — ${priceLabel}`}
+              <span aria-hidden>→</span>
             </Link>
+
+            {!isFree && (
+              <span className="font-mono text-[11px]" style={{ color: "var(--ink-3)" }}>
+                Acesso vitalício
+              </span>
+            )}
           </div>
+        </div>
+
+        <div className="order-1 md:order-2">
+          <RecipeImage
+            src={recipe.imageUrl}
+            alt={recipe.title}
+            label="destaque"
+            aspect="4/3"
+            priority
+            className="rounded-sm shadow-sm"
+          />
         </div>
       </div>
     </section>

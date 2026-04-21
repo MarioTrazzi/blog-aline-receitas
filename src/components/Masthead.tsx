@@ -1,39 +1,50 @@
-// src/components/Masthead.tsx
 export function Masthead() {
+  const categories = ["Doces", "Brasileira", "Fit", "Pães & Massas"];
+
   return (
-    <>
-      <header
-        className="flex items-center justify-between border-b px-6 py-5 md:px-14"
-        style={{ borderColor: "rgba(31,26,20,0.15)" }}
+    <header>
+      <div
+        className="flex items-center justify-between border-b px-6 py-4 md:px-14"
+        style={{ borderColor: "rgba(31,26,20,0.12)" }}
       >
-        <div className="kicker">Edição 04 · Abril 2026</div>
-        <nav className="hidden gap-6 font-mono text-[11px] uppercase tracking-[0.12em] md:flex">
-          {["Doces", "Brasileira", "Fit", "Pães"].map((c) => (
-            <a key={c} href="#" style={{ color: "var(--ink)" }} className="no-underline">
+        <nav className="hidden gap-7 md:flex">
+          {categories.map((c) => (
+            <a
+              key={c}
+              href="#"
+              className="font-mono text-[11px] uppercase tracking-[0.12em] transition-colors"
+              style={{ color: "var(--ink-3)" }}
+            >
               {c}
             </a>
           ))}
         </nav>
-        <div className="kicker">№ 04</div>
-      </header>
 
-      <div
-        className="px-6 py-12 text-center md:px-14"
-        style={{ borderBottom: "2px solid var(--ink)" }}
-      >
-        <div className="kicker-accent mb-3">
-          Receitas exclusivas · Cozinhadas com cuidado
+        <a href="/" className="text-center no-underline">
+          <div className="display text-[28px] leading-none md:text-[32px]" style={{ color: "var(--ink)" }}>
+            Blog da <span className="italic-accent">Aline</span>
+          </div>
+          <div className="kicker mt-1" style={{ color: "var(--ink-3)" }}>
+            Receitas exclusivas
+          </div>
+        </a>
+
+        <div className="hidden md:block">
+          <a
+            href="#newsletter"
+            className="rounded-sm px-4 py-2 font-mono text-[11px] uppercase tracking-[0.1em] transition-opacity hover:opacity-80"
+            style={{ background: "var(--terracota)", color: "var(--paper)" }}
+          >
+            Receita grátis →
+          </a>
         </div>
-        <h1 className="display text-[64px] md:text-[104px]" style={{ fontWeight: 300 }}>
-          Blog da{" "}
-          <span className="italic-accent" style={{ fontSize: "1.04em", fontWeight: 400 }}>
-            Aline
-          </span>
-        </h1>
-        <div className="kicker mt-3">
-          Comida brasileira · Fit · Pães &amp; massas
+
+        <div className="block md:hidden">
+          <svg width="20" height="14" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M0 1h20M0 7h20M0 13h20" />
+          </svg>
         </div>
       </div>
-    </>
+    </header>
   );
 }

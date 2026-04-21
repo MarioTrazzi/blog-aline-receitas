@@ -26,12 +26,14 @@ export default async function Home() {
     <main>
       <Masthead />
 
+      <div style={{ borderBottom: "1px solid rgba(31,26,20,0.12)" }} />
+
       {featured ? (
         <Hero recipe={featured} />
       ) : (
         <section className="px-6 py-24 text-center md:px-14">
           <p className="kicker mb-4">Em breve</p>
-          <h2 className="display text-[40px] md:text-[56px]">
+          <h2 className="display text-[36px] md:text-[48px]">
             Nenhuma receita publicada <span className="italic-accent">ainda</span>.
           </h2>
           <p className="mt-4" style={{ color: "var(--ink-3)" }}>
